@@ -1,5 +1,6 @@
 package clientServerClient;
 
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -11,6 +12,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
+
 
 public class Server extends Thread{
 static Vector<ClientControlar> ar = new Vector<>();
@@ -45,22 +47,14 @@ static Vector<ClientControlar> ar = new Vector<>();
 	  					//adding client into the vector for list
 	  					ar.add(clients);
 	  					
-	  					for(ClientControlar ct: Server.ar) { 
-	  						//System.out.println("online user...");
-	  						ct.os.writeUTF(username);
-	  						//ar.
-	  						System.out.println("online user..."+ct.clientName);
-	  						try {
-								Thread.sleep(50);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-	  					}
-	  					
-	  					
-	  					//starting thread
 	  					newClient.start();
+	  					
+	  					for(ClientControlar ct: Server.ar) { 
+	  						//if(ct.clientName.equals(msgReceiver) && (ct.isLogIn==true)) {
+	  							ct.os.writeUTF(" #"+username);
+	  							//break;
+	  						//}
+	  					}
 	  					
 	  					//i++;
 	  			}

@@ -1,5 +1,6 @@
 package clientServerClient;
 
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -16,6 +17,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 import java.awt.event.ActionEvent;
 
 public class User {
@@ -150,6 +152,47 @@ public class User {
 					else if(isConnected==true) {
 						System.out.println("Already exist this client...");
 					}
+					
+					
+					
+					
+					
+					//Message receiving//............................................................
+					Thread receive = new Thread(new Runnable () {
+						
+						
+						   public void run() {
+							   while(true) {
+									try {
+										
+										String receiveMsg =  reader.readUTF();
+										
+										StringTokenizer sti = new StringTokenizer(receiveMsg,"#");  // break string two part... 1)Message 2)Receiver
+										
+										String message = sti.nextToken();
+										String activelist = sti.nextToken();
+
+										
+										textArea.setEditable(true);
+										textArea.setText(message);
+										
+										activeTextArea.setEditable(true);
+										activeTextArea.setText(activelist);
+										
+										
+										System.out.println("receive thread"+receiveMsg); 
+										
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										System.out.println("Problem occured while receiving message...");
+									}		
+							   }
+						   }});
+						receive.start();
+					      //Message receiving//..............................................................
+					
+					
+					
 				
 			}
 		});
@@ -157,8 +200,7 @@ public class User {
 		//log in//...................................................................................................................................................
 		
 		
-		
-		
+				
 		
 		//Message sending//............................................................................................................................................
 		 sendButton.addActionListener(new ActionListener() {
@@ -179,51 +221,10 @@ public class User {
 		
 		
 		
-		//Message receiving//............................................................
-		Thread receive = new Thread(new Runnable () {
-			  		   
-			   public void run() {
-				   while(true) {
-						try {
-							System.out.println("receiving");
-							  
-							String receiveMsg =  reader.readUTF();
-							textArea.setEditable(true);
-							textArea.setText(receiveMsg);
-							System.out.println("receive thread"+receiveMsg); 
-							
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							System.out.println("Problem occured while receiving message...");
-						}		
-				   }
-			   }});
-		
-		      //Message receiving//..............................................................
 		
 		
 		
-		//checking login//........................................................................
-		 Thread checkingConnection = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					while(true) {
-						//System.out.println("befor");
-						if(flag==true) {
-							
-							//sendThread.start();
-							receive.start();
-							break;						
-						
-						}
-								
-					}
-				}
-				  
-			  });
-		 
-			  
-			  checkingConnection.start();
+		
 		
 			//checking login//........................................................................
 			
