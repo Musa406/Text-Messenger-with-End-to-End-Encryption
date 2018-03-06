@@ -15,8 +15,6 @@ import java.util.Vector;
 public class Server extends Thread{
 static Vector<ClientControlar> ar = new Vector<>();
 
-static int i = 1; //counter for clients
-
   public static void main(String args[]) {
 	  
 	  		
@@ -26,25 +24,45 @@ static int i = 1; //counter for clients
 	  			while(true) {
 	  					
 	  					Socket socketForClient = severMainSocket.accept();
-	  					System.out.println("Accepted client..."+i);
+	  					
 	  					
 	  					//input,output
-	  					//BufferedReader is = new BufferedReader(new InputStreamReader(socketForClient.getInputStream()));
 	  					DataInputStream is = new DataInputStream(socketForClient.getInputStream());
 	  					DataOutputStream os = new DataOutputStream(socketForClient.getOutputStream());
 	  					//input,output
 	  					
-	  					//creating a new thread for this client
-	  					ClientControlar clients = new ClientControlar(socketForClient,"client "+i,is,os);
-	  					Thread newClient = new Thread(clients);
-	  				
+	  					
+	  					String username = is.readUTF();
+	  					
+	  					System.out.println("server class::"+username);
+	  					System.out.println("Accepted client..."+username);
+	  					
+	  					ClientControlar clients = new ClientControlar(socketForClient,username,is,os);
+	  					Thread newClient = new Thread(clients); 
+	  					
+	  					
+	  					
 	  					//adding client into the vector for list
 	  					ar.add(clients);
-	  				
+	  					
+	  					for(ClientControlar ct: Server.ar) { 
+	  						//System.out.println("online user...");
+	  						ct.os.writeUTF(username);
+	  						//ar.
+	  						System.out.println("online user..."+ct.clientName);
+	  						try {
+								Thread.sleep(50);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+	  					}
+	  					
+	  					
 	  					//starting thread
 	  					newClient.start();
 	  					
-	  					i++;
+	  					//i++;
 	  			}
 	  			
 	  			
