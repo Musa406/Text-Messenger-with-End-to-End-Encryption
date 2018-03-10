@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import java.awt.event.ActionEvent;
 
 public class User {
@@ -25,16 +26,19 @@ public class User {
 	private JFrame frame;
 	private JTextField usernameField;
 	private JPasswordField password;
+	static Vector<String>userlist = new Vector();
+	
 	
 	
 	static Socket sock;
 	static String username;
-	ArrayList<String>userList = new ArrayList();
+	//ArrayList<String>userList = new ArrayList();
 	static Boolean isConnected = false;
 	static DataInputStream reader ;
 	static DataOutputStream writer;
 	static boolean flag=false;
 
+	
 	/**
 	 * Launch the application.
 	 */
@@ -51,10 +55,9 @@ public class User {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
+	//Graphical part..............................................................................
 	public User() {
+
 		frame = new JFrame();
 		frame.getContentPane().setBackground(new Color(95, 158, 160));
 		frame.setBounds(100, 100, 564, 496);
@@ -88,15 +91,16 @@ public class User {
 		
 		JTextArea textArea = new JTextArea();
 		textArea.setBackground(new Color(192, 192, 192));
-		textArea.setBounds(24, 119, 241, 230);
+		textArea.setBounds(24, 119, 268, 136);
 		frame.getContentPane().add(textArea);
 		
 		JLabel lblNewLabel = new JLabel("Message");
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 16));
-		lblNewLabel.setBounds(275, 219, 81, 55);
+		lblNewLabel.setBounds(302, 164, 81, 55);
 		frame.getContentPane().add(lblNewLabel);
 		
 		JTextArea inputTextArea = new JTextArea();
+		inputTextArea.setBackground(Color.LIGHT_GRAY);
 		inputTextArea.setBounds(24, 373, 241, 50);
 		frame.getContentPane().add(inputTextArea);
 		
@@ -113,15 +117,27 @@ public class User {
 		
 		JTextArea activeTextArea = new JTextArea();
 		activeTextArea.setBackground(new Color(192, 192, 192));
-		activeTextArea.setBounds(392, 119, 129, 294);
+		activeTextArea.setBounds(405, 119, 116, 294);
 		frame.getContentPane().add(activeTextArea);
 		
+		JTextArea textArea_1 = new JTextArea();
+		textArea_1.setBackground(Color.LIGHT_GRAY);
+		textArea_1.setBounds(24, 289, 268, 55);
+		frame.getContentPane().add(textArea_1);
+		
+		JLabel lblCipherText = new JLabel("Cipher Text");
+		lblCipherText.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 14));
+		lblCipherText.setBounds(298, 289, 85, 50);
+		frame.getContentPane().add(lblCipherText);
+		//.....................................................................................................................
 		
 		
 		//log in//................................................................................................................................
+		
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//public void actionPerformed(ActionEvent arg0) {
+					
 					System.out.println("connection ok...");
 					flag=true;
 					if(isConnected==false) {
@@ -162,9 +178,12 @@ public class User {
 						
 						
 						   public void run() {
+							   
 							   while(true) {
+								   
 									try {
-										
+										boolean flagToCheckUser = true;
+										//System.out.println("check vec :  "+userList(0));
 										String receiveMsg =  reader.readUTF();
 										
 										StringTokenizer sti = new StringTokenizer(receiveMsg,"#");  // break string two part... 1)Message 2)Receiver
@@ -176,11 +195,29 @@ public class User {
 										textArea.setEditable(true);
 										textArea.setText(message);
 										
-										activeTextArea.setEditable(true);
-										activeTextArea.setText(activelist);
+										
+										//Active user list//..............................................
+										
+										int x = userlist.size();
+										
+										for(int i=0;i<x; i++) {									
+											if(activelist.equals(userlist.get(i))) {
+												System.out.println(i+userlist.get(i));	
+												flagToCheckUser=false;
+												break;			
+											}
+										}	
 										
 										
-										System.out.println("receive thread"+receiveMsg); 
+										if(flagToCheckUser==true) {
+											System.out.println(" not existed..");
+											activeTextArea.setEditable(true);
+											activeTextArea.append(activelist+"\n");
+											userlist.add(activelist);
+										}	
+										
+										//.................................................................
+										
 										
 									} catch (IOException e) {
 										// TODO Auto-generated catch block
@@ -192,18 +229,15 @@ public class User {
 					      //Message receiving//..............................................................
 					
 					
-					
-				
 			}
 		});
 		
 		//log in//...................................................................................................................................................
 		
-		
 				
-		
 		//Message sending//............................................................................................................................................
 		 sendButton.addActionListener(new ActionListener() {
+			 
 				public void actionPerformed(ActionEvent arg0) {
 					String input = inputTextArea.getText();
 					try {
@@ -218,17 +252,7 @@ public class User {
 		
 		 ///Message sending//..........................................................................................................................................
 		
-		
-		
-		
-		
-		
-		
-		
-		
-			//checking login//........................................................................
 			
 		
 	}
-
 }

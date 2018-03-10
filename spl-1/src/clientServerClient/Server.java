@@ -1,6 +1,5 @@
 package clientServerClient;
 
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -16,16 +15,22 @@ import java.util.Vector;
 
 public class Server extends Thread{
 static Vector<ClientControlar> ar = new Vector<>();
+static Vector<String>userList = new Vector();
 
   public static void main(String args[]) {
-	  
+	  		
+	  		
 	  		
 	  		try {
 	  			ServerSocket severMainSocket = new ServerSocket(9999);
-	  			
+	  			//ServerSocket severMainSocketList = new ServerSocket(9999);//for user list sending
+	  			int i=0;
 	  			while(true) {
+	  				    
+	  				
 	  					
 	  					Socket socketForClient = severMainSocket.accept();
+	  					//Socket socketList = severMainSocketList.accept();
 	  					
 	  					
 	  					//input,output
@@ -36,6 +41,7 @@ static Vector<ClientControlar> ar = new Vector<>();
 	  					
 	  					String username = is.readUTF();
 	  					
+	  					userList.add(username);
 	  					System.out.println("server class::"+username);
 	  					System.out.println("Accepted client..."+username);
 	  					
@@ -51,12 +57,14 @@ static Vector<ClientControlar> ar = new Vector<>();
 	  					
 	  					for(ClientControlar ct: Server.ar) { 
 	  						//if(ct.clientName.equals(msgReceiver) && (ct.isLogIn==true)) {
-	  							ct.os.writeUTF(" #"+username);
+	  							for(String j: userList)
+	  								ct.os.writeUTF(" #"+j);
+	  							
 	  							//break;
 	  						//}
 	  					}
 	  					
-	  					//i++;
+	  					i++;
 	  			}
 	  			
 	  			
