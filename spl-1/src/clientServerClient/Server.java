@@ -16,7 +16,7 @@ import java.util.Vector;
 public class Server extends Thread{
 static Vector<ClientControlar> ar = new Vector<>();
 static Vector<String>userList = new Vector();
-
+static int i=0;
   public static void main(String args[]) {
 	  		
 	  		
@@ -24,7 +24,7 @@ static Vector<String>userList = new Vector();
 	  		try {
 	  			ServerSocket severMainSocket = new ServerSocket(9999);
 	  			//ServerSocket severMainSocketList = new ServerSocket(9999);//for user list sending
-	  			int i=0;
+	  		
 	  			while(true) {
 	  				    
 	  				
@@ -54,17 +54,16 @@ static Vector<String>userList = new Vector();
 	  					ar.add(clients);
 	  					
 	  					newClient.start();
+	  					i++;
 	  					
 	  					for(ClientControlar ct: Server.ar) { 
 	  						//if(ct.clientName.equals(msgReceiver) && (ct.isLogIn==true)) {
 	  							for(String j: userList)
 	  								ct.os.writeUTF(" #"+j);
 	  							
-	  							//break;
-	  						//}
 	  					}
 	  					
-	  					i++;
+	  					
 	  			}
 	  			
 	  			

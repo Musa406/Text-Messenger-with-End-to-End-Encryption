@@ -32,49 +32,58 @@ public class ClientControlar implements Runnable{
 			try {
 				receive = is.readUTF();
 				System.out.println(receive);		
-				//log out
 				
+				//Logout............................................................................
 				if(receive.equals("logout")) {
 					this.isLogIn = false;
+					Server sr = new Server();
+					int x=sr.i-1;
+					System.out.println(" .. "+x);
+					sr.ar.remove(x);
+					sr.userList.remove(x);
+					sr.i=x;
 			
-					System.out.println("log out successfully...");
-					
-					//kick out this client.....
-						try {
-							this.socketForClient.close();
-						}catch(Exception e1){
-							System.out.println("problem occured to close this particular client...");
+					System.out.println("log out successfully...");				
+					        break;			
+				}
+				//..............................................................................
+				
+				//Sending messege to targeted user..............................................
+				else {
+				
+						StringTokenizer sti = new StringTokenizer(receive, "#");  // break string two part... 1)Message 2)Receiver
+						
+						String msgToSend = sti.nextToken();
+						String msgReceiver = sti.nextToken();
+						
+						//Searching receiver...
+						for(ClientControlar ct: Server.ar) { 
+							if(ct.clientName.equals(msgReceiver) && (ct.isLogIn==true)) {
+								ct.os.writeUTF(clientName+": "+msgToSend+"# ");
+								break;
+							}
 						}
-					break;
-					
-				}
-				
-				StringTokenizer sti = new StringTokenizer(receive, "#");  // break string two part... 1)Message 2)Receiver
-				
-				String msgToSend = sti.nextToken();
-				String msgReceiver = sti.nextToken();
-				
-				//Searching receiver...
-				for(ClientControlar ct: Server.ar) { 
-					if(ct.clientName.equals(msgReceiver) && (ct.isLogIn==true)) {
-						ct.os.writeUTF(clientName+": "+msgToSend+"# ");
-						break;
-					}
-				}
 			
+				}
+				//...................................................................................
+				
 			}catch(IOException ex){
 				System.out.println("problem occurrs in thread client");
 			}
 		}
 		
-		//closing stream
-		 try {
-	            this.is.close();
-	            this.os.close();
-	             
-	        }catch(IOException e){
-	            System.out.println("problem occured to closing stream..");;
-	        }
+		//closing stream..............................................................
+		try {
+			os.close();
+			is.close();
+			this.socketForClient.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//closing stream..............................................................
+		
 	}
 
 }

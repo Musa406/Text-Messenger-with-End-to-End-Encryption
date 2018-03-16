@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import java.awt.Color;
@@ -29,7 +30,7 @@ public class User {
 	static Vector<String>userlist = new Vector();
 	
 	
-	
+	Thread receive;
 	static Socket sock;
 	static String username;
 	//ArrayList<String>userList = new ArrayList();
@@ -37,6 +38,7 @@ public class User {
 	static DataInputStream reader ;
 	static DataOutputStream writer;
 	static boolean flag=false;
+	private JTextField ipField;
 
 	
 	/**
@@ -60,7 +62,7 @@ public class User {
 
 		frame = new JFrame();
 		frame.getContentPane().setBackground(new Color(95, 158, 160));
-		frame.setBounds(100, 100, 564, 496);
+		frame.setBounds(100, 100, 640, 497);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -72,7 +74,7 @@ public class User {
 		JButton loginButton = new JButton("Log in");
 		
 		loginButton.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		loginButton.setBounds(255, 25, 89, 23);
+		loginButton.setBounds(378, 26, 89, 23);
 		frame.getContentPane().add(loginButton);
 		
 		JLabel lblUsername = new JLabel("username");
@@ -82,53 +84,64 @@ public class User {
 		
 		JLabel lblPassword = new JLabel("password");
 		lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblPassword.setBounds(170, 61, 64, 14);
+		lblPassword.setBounds(153, 61, 81, 14);
 		frame.getContentPane().add(lblPassword);
 		
 		password = new JPasswordField();
-		password.setBounds(143, 24, 95, 25);
+		password.setBounds(139, 24, 95, 25);
 		frame.getContentPane().add(password);
 		
 		JTextArea textArea = new JTextArea();
 		textArea.setBackground(new Color(192, 192, 192));
-		textArea.setBounds(24, 119, 268, 136);
+		textArea.setBounds(24, 119, 289, 136);
 		frame.getContentPane().add(textArea);
 		
 		JLabel lblNewLabel = new JLabel("Message");
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 16));
-		lblNewLabel.setBounds(302, 164, 81, 55);
+		lblNewLabel.setBounds(333, 161, 81, 55);
 		frame.getContentPane().add(lblNewLabel);
 		
 		JTextArea inputTextArea = new JTextArea();
 		inputTextArea.setBackground(Color.LIGHT_GRAY);
-		inputTextArea.setBounds(24, 373, 241, 50);
+		inputTextArea.setBounds(24, 373, 289, 55);
 		frame.getContentPane().add(inputTextArea);
 		
 		JButton sendButton = new JButton("Send");
 		sendButton.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 18));
 		sendButton.setBackground(new Color(32, 178, 170));
-		sendButton.setBounds(275, 382, 81, 31);
+		sendButton.setBounds(331, 382, 108, 31);
 		frame.getContentPane().add(sendButton);
 		
 		JLabel lblActiveUser = new JLabel("Active user");
 		lblActiveUser.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 16));
-		lblActiveUser.setBounds(415, 77, 106, 31);
+		lblActiveUser.setBounds(468, 72, 122, 31);
 		frame.getContentPane().add(lblActiveUser);
 		
 		JTextArea activeTextArea = new JTextArea();
 		activeTextArea.setBackground(new Color(192, 192, 192));
-		activeTextArea.setBounds(405, 119, 116, 294);
+		activeTextArea.setBounds(458, 119, 116, 294);
 		frame.getContentPane().add(activeTextArea);
 		
 		JTextArea textArea_1 = new JTextArea();
 		textArea_1.setBackground(Color.LIGHT_GRAY);
-		textArea_1.setBounds(24, 289, 268, 55);
+		textArea_1.setBounds(24, 289, 289, 54);
 		frame.getContentPane().add(textArea_1);
 		
 		JLabel lblCipherText = new JLabel("Cipher Text");
 		lblCipherText.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 14));
-		lblCipherText.setBounds(298, 289, 85, 50);
+		lblCipherText.setBounds(337, 304, 102, 39);
 		frame.getContentPane().add(lblCipherText);
+		
+		ipField = new JTextField();
+		ipField.setBounds(248, 25, 108, 23);
+		frame.getContentPane().add(ipField);
+		ipField.setColumns(10);
+		
+		JLabel lblServerIp = new JLabel("server ip");
+		lblServerIp.setBounds(258, 59, 71, 20);
+		frame.getContentPane().add(lblServerIp);
+		
+		
 		//.....................................................................................................................
 		
 		
@@ -136,9 +149,7 @@ public class User {
 		
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//public void actionPerformed(ActionEvent arg0) {
-					
-					System.out.println("connection ok...");
+
 					flag=true;
 					if(isConnected==false) {
 						
@@ -149,17 +160,15 @@ public class User {
 						username = usernameField.getText();
 						usernameField.setEditable(false);
 						
-						
-							sock = new Socket("localhost", 9999);
+							String serverIp = ipField.getText();
+							sock = new Socket(serverIp,9999);
 							reader = new DataInputStream (sock.getInputStream());
 							writer = new DataOutputStream(sock.getOutputStream());
 							
 							writer.writeUTF(username);
-							
+							JOptionPane.showMessageDialog(frame, "Sending rule: Messege #Receiver");
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
-							//chatTextArea.append("can't connect ");
 							usernameField.setEditable(true);
 						}
 						
@@ -174,7 +183,7 @@ public class User {
 					
 					
 					//Message receiving//............................................................
-					Thread receive = new Thread(new Runnable () {
+					 receive = new Thread(new Runnable () {
 						
 						
 						   public void run() {
@@ -183,7 +192,7 @@ public class User {
 								   
 									try {
 										boolean flagToCheckUser = true;
-										//System.out.println("check vec :  "+userList(0));
+									
 										String receiveMsg =  reader.readUTF();
 										
 										StringTokenizer sti = new StringTokenizer(receiveMsg,"#");  // break string two part... 1)Message 2)Receiver
@@ -193,7 +202,7 @@ public class User {
 
 										
 										textArea.setEditable(true);
-										textArea.setText(message);
+										textArea.append(message+"\n");
 										
 										
 										//Active user list//..............................................
@@ -252,7 +261,28 @@ public class User {
 		
 		 ///Message sending//..........................................................................................................................................
 		
+		//Logout.....................................................................................
+		 JButton btnLogOut = new JButton("Log out");
+			btnLogOut.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					try {
+						
+						writer.writeUTF("logout");
+						reader.close();
+						writer.close();
+						receive.stop();
+						frame.setVisible(false);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
 			
+			btnLogOut.setBounds(501, 25, 89, 23);
+			frame.getContentPane().add(btnLogOut);
+	
+		//................................................................................................
 		
 	}
 }
