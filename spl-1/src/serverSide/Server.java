@@ -1,4 +1,4 @@
-package clientServerClient;
+package serverSide;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -14,7 +14,7 @@ import java.util.Vector;
 
 
 public class Server extends Thread{
-static Vector<ClientControlar> ar = new Vector<>();
+static Vector<ClientController> ar = new Vector<>();
 static Vector<String>userList = new Vector();
 static int i=0;
   public static void main(String args[]) {
@@ -45,7 +45,7 @@ static int i=0;
 	  					System.out.println("server class::"+username);
 	  					System.out.println("Accepted client..."+username);
 	  					
-	  					ClientControlar clients = new ClientControlar(socketForClient,username,is,os);
+	  					ClientController clients = new ClientController(socketForClient,username,is,os);
 	  					Thread newClient = new Thread(clients); 
 	  					
 	  					
@@ -56,7 +56,7 @@ static int i=0;
 	  					newClient.start();
 	  					i++;
 	  					
-	  					for(ClientControlar ct: Server.ar) { 
+	  					for(ClientController ct: Server.ar) { 
 	  						//if(ct.clientName.equals(msgReceiver) && (ct.isLogIn==true)) {
 	  							for(String j: userList)
 	  								ct.os.writeUTF(" #"+j);

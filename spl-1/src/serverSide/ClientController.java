@@ -1,4 +1,4 @@
-package clientServerClient;
+package serverSide;
 
 
 
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.StringTokenizer;
 
-public class ClientControlar implements Runnable{
+public class ClientController implements Runnable{
 	
 	Socket socketForClient;
 	private String clientName;
@@ -16,7 +16,7 @@ public class ClientControlar implements Runnable{
 	final DataOutputStream os;
 	boolean isLogIn;
 
-	public ClientControlar(Socket socketForClient, String clientName, DataInputStream is, DataOutputStream os) {
+	public ClientController(Socket socketForClient, String clientName, DataInputStream is, DataOutputStream os) {
 		this.socketForClient=socketForClient;
 		this.clientName=clientName;
 		this.is=is;
@@ -57,7 +57,7 @@ public class ClientControlar implements Runnable{
 						String msgReceiver = sti.nextToken();
 						
 						//Searching receiver...
-						for(ClientControlar ct: Server.ar) { 
+						for(ClientController ct: Server.ar) { 
 							if(ct.clientName.equals(msgReceiver) && (ct.isLogIn==true)) {
 								ct.os.writeUTF(clientName+": "+msgToSend+"# ");
 								break;

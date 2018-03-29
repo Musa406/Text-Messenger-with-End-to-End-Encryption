@@ -1,10 +1,11 @@
-package clientServerClient;
+package clientSide;
 
 
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JTextField;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -21,6 +22,10 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
+import javax.swing.JToggleButton;
+import javax.swing.ListSelectionModel;
+import javax.swing.JScrollBar;
+import javax.swing.JList;
 
 public class User {
 
@@ -117,11 +122,6 @@ public class User {
 		lblActiveUser.setBounds(468, 72, 122, 31);
 		frame.getContentPane().add(lblActiveUser);
 		
-		JTextArea activeTextArea = new JTextArea();
-		activeTextArea.setBackground(new Color(192, 192, 192));
-		activeTextArea.setBounds(458, 119, 116, 294);
-		frame.getContentPane().add(activeTextArea);
-		
 		JTextArea textArea_1 = new JTextArea();
 		textArea_1.setBackground(Color.LIGHT_GRAY);
 		textArea_1.setBounds(24, 289, 289, 54);
@@ -142,6 +142,20 @@ public class User {
 		frame.getContentPane().add(lblServerIp);
 		
 		
+		
+		
+		
+		final DefaultListModel userNames = new DefaultListModel();
+		
+		
+		JList list = new JList(userNames);
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	    list.setSelectedIndex(0);
+	    list.setVisibleRowCount(10);
+		list.setBounds(468, 123, 118, 284);
+		frame.getContentPane().add(list);
+	
+		//JScrollPane fruitListScrollPane = new JScrollPane(list);
 		//.....................................................................................................................
 		
 		
@@ -154,7 +168,7 @@ public class User {
 					if(isConnected==false) {
 						
 						try {
-							System.out.println("connection ok.2...");
+							
 							System.out.println("flag checking:::"+flag);
 						isConnected=true;
 						username = usernameField.getText();
@@ -166,7 +180,7 @@ public class User {
 							writer = new DataOutputStream(sock.getOutputStream());
 							
 							writer.writeUTF(username);
-							JOptionPane.showMessageDialog(frame, "Sending rule: Messege #Receiver");
+							
 						} catch (IOException e) {
 							e.printStackTrace();
 							usernameField.setEditable(true);
@@ -207,6 +221,8 @@ public class User {
 										
 										//Active user list//..............................................
 										
+										
+										
 										int x = userlist.size();
 										
 										for(int i=0;i<x; i++) {									
@@ -220,8 +236,7 @@ public class User {
 										
 										if(flagToCheckUser==true) {
 											System.out.println(" not existed..");
-											activeTextArea.setEditable(true);
-											activeTextArea.append(activelist+"\n");
+											userNames.addElement(activelist);
 											userlist.add(activelist);
 										}	
 										
@@ -248,9 +263,20 @@ public class User {
 		 sendButton.addActionListener(new ActionListener() {
 			 
 				public void actionPerformed(ActionEvent arg0) {
+
+					 String data = " ";
+			            if (list.getSelectedIndex() != -1) {                     
+			               data =  (String) list.getSelectedValue(); 
+			        
+			            }
+			            		
 					String input = inputTextArea.getText();
 					try {
-						writer.writeUTF(input);
+						if(!data.equals(" "))
+						 writer.writeUTF(input+"#"+data);
+						
+						else JOptionPane.showMessageDialog(frame, "Select Receiver, please");
+						
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -281,6 +307,10 @@ public class User {
 			
 			btnLogOut.setBounds(501, 25, 89, 23);
 			frame.getContentPane().add(btnLogOut);
+			
+			
+			
+			
 	
 		//................................................................................................
 		
