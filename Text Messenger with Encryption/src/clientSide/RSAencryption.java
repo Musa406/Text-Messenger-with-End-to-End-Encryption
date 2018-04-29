@@ -1,135 +1,116 @@
 package clientSide;
 
-import java.io.DataInputStream;
-import java.io.IOException;
+
+
 import java.math.BigInteger;
+
 import java.util.Random;
 
 
 
-public class RSAencryption
+public class RSAencryption {
+
+private BigInteger p;
+
+private BigInteger q;
+
+private BigInteger n;
+
+private BigInteger phi;
+
+private BigInteger e;
+
+private BigInteger d;
+
+private int bitlength = 1024;
+
+private Random     r;
+
+public RSAencryption()
 
 {
+    r = new Random();
 
-  private BigInteger p ,q, N, phi, e, d;
+    p = BigInteger.probablePrime(bitlength, r); // p = big prime
 
-  private Random random;
-   int bitlength = 1024;
+    q = BigInteger.probablePrime(bitlength, r); // q = big prime
 
+    n = p.multiply(q); // n = p*q
+
+    phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE)); //phi = (p-1)*(q-1)
+
+    
+    //key generation..........................................
+    
+    e = BigInteger.probablePrime(bitlength / 2, r); // e = low number
+    
+    while (phi.gcd(e).compareTo(BigInteger.ONE) > 0 && e.compareTo(phi) < 0) //finding  e
+
+    {
+
+        e.add(BigInteger.ONE); //e++
+
+    }
  
+    d = e.modInverse(phi); //d = e^-1(mod n)
+ 
+    //..........................................................
+}
 
-   public RSAencryption()
+public RSAencryption(BigInteger e, BigInteger d, BigInteger n)
+{
+    this.e = e;
 
-   {
-       random = new Random();
+    this.d = d;
 
-       p = BigInteger.probablePrime(bitlength, random);
+    this.n = n;
+}
 
-       q = BigInteger.probablePrime(bitlength, random);
+	//encryption
 
-       N = p.multiply(q);
-       
-       
-       //key generation............................................................................
-
-       phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
-
-       e = BigInteger.probablePrime(bitlength / 2, random);
-
-       while (phi.gcd(e).compareTo(BigInteger.ONE) > 0 && e.compareTo(phi) < 0)
-
-       {
-
-           e.add(BigInteger.ONE);
-
-       }
-
-       d = e.modInverse(phi);
-       
-       //..................................................................................................
-
-   }
-
-
-   public RSAencryption(BigInteger e, BigInteger d, BigInteger N)
-   {
-       this.e = e;
-
-       this.d = d;
-
-       this.N = N;
-   }
-
-   public static void main(String[] args) throws IOException
-
-   {
-
-       RSAencryption rsa = new RSAencryption();
-
-       DataInputStream in = new DataInputStream(System.in);
-
-       String teststring;
-
-       System.out.println("Enter the plain text:");
-
-       teststring = in.readLine();
-       System.out.println(teststring);
-
-       //plaintex value in byte: 
-       System.out.println("plainText in byte : "  + bytesToString(teststring.getBytes()));
-     
-       // encrypt.........
-       byte[] encrypted = rsa.rsaEncryption(teststring.getBytes());
-       System.out.println("Encrypted value in byte: "+ encrypted);
-
-       // decrypt.........
-       byte[] decrypted = rsa.rsaDecryption(encrypted);
-
-       System.out.println("Decrypted String: " + new String(decrypted));
-
-   }
+	public String encrypt(String message, String strE, String strN)
+	{
+		byte [] messageByte = message.getBytes();
+		
+		BigInteger messageInt = new BigInteger(messageByte);
+		
+		BigInteger keyE = new BigInteger(strE);
+		BigInteger keyN = new BigInteger(strN);
+		
+		BigInteger cipherText = messageInt.modPow(keyE ,  keyN); // (PlainText^e) mod n
+		
+		String cipherData = ""+cipherText;
+		
+		return cipherData;
+	}
+	
 
 
-
-   private static String bytesToString(byte[] encrypted)
-   {
-	   
-       String test = "";
-
-       for (byte b : encrypted)
-       {
-
-           test += Byte.toString(b);
-       }
-
-       return test;
-   }
-
-
-
-  
-
-   public byte[] rsaEncryption(byte[] message)
-
-   {
-       byte []cipherText = (new BigInteger(message)).modPow(e, N).toByteArray();
-       
-       return cipherText;
-
-   }
-
-
-
-   // Decrypt message
-
-   public byte[] rsaDecryption(byte[] message)
-
-   {
-
-       byte [] plainText =  (new BigInteger(message)).modPow(d, N).toByteArray();
-       
-       return plainText;
-
-   }
+    //decryption
+	
+	public String decrypt(String message)
+	
+	{
+		BigInteger messageInt = new BigInteger(message);
+		
+		BigInteger cipherText = messageInt.modPow(d ,  n); // (CipherText^e) mod n
+		
+		String plainText = new String(cipherText.toByteArray());
+		
+		return plainText;
+	}
+	
+	
+	
+	public String getPublicKey()
+	{
+		String E = ""+e;
+		String N = ""+n;
+		
+		String publicKey = E+"               "+N;
+		
+		return publicKey;
+	}
 
 }
+

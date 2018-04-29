@@ -26,22 +26,27 @@ public class ClientController implements Runnable{
 
 	@Override
 	public void run() {
-		String receive;
+		String receiveAll;
 		
 		while(true) {
 			try {
-				receive = is.readUTF();
-				System.out.println(receive);		
+				receiveAll = is.readUTF();
+				System.out.println(receiveAll);		
 				
 				//Logout............................................................................
-				if(receive.equals("logout")) {
+				if(receiveAll.equals("logout")) {
 					this.isLogIn = false;
 					Server sr = new Server();
 					int x=sr.i-1;
 					System.out.println(" .. "+x);
+					
+					
+					
 					sr.ar.remove(x);
 					sr.userList.remove(x);
-					sr.i=x;
+					
+                  
+				    sr.i=x;
 			
 					System.out.println("log out successfully...");				
 					        break;			
@@ -51,7 +56,7 @@ public class ClientController implements Runnable{
 				//Sending messege to targeted user..............................................
 				else {
 				
-						StringTokenizer sti = new StringTokenizer(receive, "#");  // break string two part... 1)Message 2)Receiver
+						StringTokenizer sti = new StringTokenizer(receiveAll, "#!#");  // break string two part... 1)Message 2)Receiver
 						
 						String msgToSend = sti.nextToken();
 						String msgReceiver = sti.nextToken();
@@ -59,7 +64,8 @@ public class ClientController implements Runnable{
 						//Searching receiver...
 						for(ClientController ct: Server.ar) { 
 							if(ct.clientName.equals(msgReceiver) && (ct.isLogIn==true)) {
-								ct.os.writeUTF(clientName+": "+msgToSend+"# ");
+								String str[] = clientName.split("               ");
+								ct.os.writeUTF(str[0]+"::"+msgToSend+"#!# ");
 								break;
 							}
 						}

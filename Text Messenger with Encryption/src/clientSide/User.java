@@ -27,6 +27,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JScrollBar;
 import javax.swing.JList;
 
+
+
+
 public class User {
 
 	private JFrame frame;
@@ -45,6 +48,7 @@ public class User {
 	static boolean flag=false;
 	private JTextField ipField;
 
+	SignUpClass signup;
 	
 	/**
 	 * Launch the application.
@@ -64,12 +68,15 @@ public class User {
 
 	//Graphical part..............................................................................
 	public User() {
+		
+		RSAencryption rsa = new RSAencryption();
 
 		frame = new JFrame();
 		frame.getContentPane().setBackground(new Color(95, 158, 160));
 		frame.setBounds(100, 100, 640, 497);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		frame.setVisible(true);
 		
 		usernameField = new JTextField();
 		usernameField.setBounds(24, 24, 95, 25);
@@ -77,19 +84,19 @@ public class User {
 		usernameField.setColumns(10);
 		
 		JButton loginButton = new JButton("Log in");
+		loginButton.setBounds(378, 26, 89, 23);
 		
 		loginButton.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		loginButton.setBounds(378, 26, 89, 23);
 		frame.getContentPane().add(loginButton);
 		
 		JLabel lblUsername = new JLabel("username");
-		lblUsername.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblUsername.setBounds(34, 60, 71, 14);
+		lblUsername.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		frame.getContentPane().add(lblUsername);
 		
 		JLabel lblPassword = new JLabel("password");
-		lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblPassword.setBounds(153, 61, 81, 14);
+		lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		frame.getContentPane().add(lblPassword);
 		
 		password = new JPasswordField();
@@ -97,40 +104,61 @@ public class User {
 		frame.getContentPane().add(password);
 		
 		JTextArea textArea = new JTextArea();
-		textArea.setBackground(new Color(192, 192, 192));
 		textArea.setBounds(24, 119, 289, 136);
+		textArea.setBackground(new Color(192, 192, 192));
 		frame.getContentPane().add(textArea);
 		
 		JLabel lblNewLabel = new JLabel("Message");
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 16));
 		lblNewLabel.setBounds(333, 161, 81, 55);
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 16));
 		frame.getContentPane().add(lblNewLabel);
 		
 		JTextArea inputTextArea = new JTextArea();
-		inputTextArea.setBackground(Color.LIGHT_GRAY);
 		inputTextArea.setBounds(24, 373, 289, 55);
+		inputTextArea.setBackground(Color.LIGHT_GRAY);
 		frame.getContentPane().add(inputTextArea);
 		
+		
+		
 		JButton sendButton = new JButton("Send");
+		sendButton.setBounds(331, 382, 108, 31);
 		sendButton.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 18));
 		sendButton.setBackground(new Color(32, 178, 170));
-		sendButton.setBounds(331, 382, 108, 31);
 		frame.getContentPane().add(sendButton);
 		
 		JLabel lblActiveUser = new JLabel("Active user");
-		lblActiveUser.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 16));
 		lblActiveUser.setBounds(468, 72, 122, 31);
+		lblActiveUser.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 16));
 		frame.getContentPane().add(lblActiveUser);
 		
 		JTextArea textArea_1 = new JTextArea();
-		textArea_1.setBackground(Color.LIGHT_GRAY);
 		textArea_1.setBounds(24, 289, 289, 54);
+		textArea_1.setBackground(Color.LIGHT_GRAY);
 		frame.getContentPane().add(textArea_1);
 		
-		JLabel lblCipherText = new JLabel("Cipher Text");
+		//JLabel lblCipherText = new JLabel("Cipher Text");
+		JButton lblCipherText = new JButton("sign up");
+		lblCipherText.setBounds(479, 25, 108, 23);
 		lblCipherText.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 14));
-		lblCipherText.setBounds(337, 304, 102, 39);
 		frame.getContentPane().add(lblCipherText);
+		
+		
+		
+		//...
+		lblCipherText.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				frame.setVisible(false);
+				signup = new SignUpClass();
+				
+			}
+		});
+		
+		//.......................
+		
+		//.......................
+		
 		
 		ipField = new JTextField();
 		ipField.setBounds(248, 25, 108, 23);
@@ -145,14 +173,14 @@ public class User {
 		
 		
 		
-		final DefaultListModel userNames = new DefaultListModel();
+		final DefaultListModel activeUserList = new DefaultListModel();
 		
 		
-		JList list = new JList(userNames);
+		JList list = new JList(activeUserList);
+		list.setBounds(478, 118, 81, 260);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	    list.setSelectedIndex(0);
 	    list.setVisibleRowCount(10);
-		list.setBounds(468, 123, 118, 284);
 		frame.getContentPane().add(list);
 	
 		//JScrollPane fruitListScrollPane = new JScrollPane(list);
@@ -174,12 +202,15 @@ public class User {
 						username = usernameField.getText();
 						usernameField.setEditable(false);
 						
+						
 							String serverIp = ipField.getText();
 							sock = new Socket(serverIp,9999);
 							reader = new DataInputStream (sock.getInputStream());
 							writer = new DataOutputStream(sock.getOutputStream());
 							
-							writer.writeUTF(username);
+							String myKey = rsa.getPublicKey();
+							String pass = password.getText();
+							writer.writeUTF(pass+"@!@"+username+"               "+myKey);
 							
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -208,15 +239,47 @@ public class User {
 										boolean flagToCheckUser = true;
 									
 										String receiveMsg =  reader.readUTF();
+										System.out.println("message received::"+receiveMsg);
 										
-										StringTokenizer sti = new StringTokenizer(receiveMsg,"#");  // break string two part... 1)Message 2)Receiver
+										StringTokenizer sti = new StringTokenizer(receiveMsg,"#!#");  // break string two part... 1)Message 2)Receiver
 										
 										String message = sti.nextToken();
-										String activelist = sti.nextToken();
-
+										String newActiveUser = sti.nextToken();
 										
-										textArea.setEditable(true);
-										textArea.append(message+"\n");
+										
+										
+										
+										//cipher to plain
+										if(!message.equals(" ")) {
+											textArea.setEditable(true);
+											//textArea.setText(message);
+											String nameMsg[] = message.split("::");
+											
+											if(nameMsg.length>1) {
+												
+												String plainMsg = rsa.decrypt(nameMsg[1]);
+												textArea.setText(nameMsg[0]+" : "+plainMsg);
+											
+												System.out.println("cipher msg is "+nameMsg[1]);
+											}
+											
+											else if(nameMsg.length<2){
+												JOptionPane.showMessageDialog(frame, message);
+												
+												if(message.equals("username or password is incorrect ")){
+													usernameField.setEditable(true);
+													isConnected = false;
+												}
+											}
+										}
+										
+										//
+										
+										
+										//textArea.setEditable(true);
+										
+										//if(!message.equals(" "))
+											//textArea.append(message+"\n");
 										
 										
 										//Active user list//..............................................
@@ -225,21 +288,26 @@ public class User {
 										
 										int x = userlist.size();
 										
-										for(int i=0;i<x; i++) {									
-											if(activelist.equals(userlist.get(i))) {
-												System.out.println(i+userlist.get(i));	
-												flagToCheckUser=false;
-												break;			
-											}
+										if(!newActiveUser.equals(" ")){
+											
+											//String str[] = newActiveUser.split("          ");
+											//System.out.println("testing"+str[1]);
+											
+											for(int i=0; i<x; i++) {									
+												if(newActiveUser.equals(userlist.get(i))) {
+													//System.out.println(i+userlist.get(i));	
+													flagToCheckUser=false;
+													break;			
+												}
+											}	
+										
+										
+										if(flagToCheckUser==true) {   //true means this user isn't already existed
+											//System.out.println(" not existed..");
+											activeUserList.addElement(newActiveUser);
+											userlist.add(newActiveUser);
 										}	
-										
-										
-										if(flagToCheckUser==true) {
-											System.out.println(" not existed..");
-											userNames.addElement(activelist);
-											userlist.add(activelist);
-										}	
-										
+									}
 										//.................................................................
 										
 										
@@ -250,6 +318,7 @@ public class User {
 							   }
 						   }});
 						receive.start();
+						
 					      //Message receiving//..............................................................
 					
 					
@@ -264,16 +333,26 @@ public class User {
 			 
 				public void actionPerformed(ActionEvent arg0) {
 
-					 String data = " ";
+					 String receipent = " ";
 			            if (list.getSelectedIndex() != -1) {                     
-			               data =  (String) list.getSelectedValue(); 
+			               receipent =  (String) list.getSelectedValue(); 
 			        
 			            }
 			            		
-					String input = inputTextArea.getText();
+					String msg = inputTextArea.getText();
 					try {
-						if(!data.equals(" "))
-						 writer.writeUTF(input+"#"+data);
+						if(!receipent.equals(" "))
+						{
+							//encryption..................................................
+								String str[] = receipent.split("               ");
+								
+								String cipherMsg = rsa.encrypt(msg,str[1],str[2]);
+								
+							//...........................................................
+								
+							 writer.writeUTF(cipherMsg+"#!#"+receipent);
+						}
+						
 						
 						else JOptionPane.showMessageDialog(frame, "Select Receiver, please");
 						
@@ -289,14 +368,16 @@ public class User {
 		
 		//Logout.....................................................................................
 		 JButton btnLogOut = new JButton("Log out");
+		 btnLogOut.setBounds(479, 405, 89, 23);
 			btnLogOut.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
 						
 						writer.writeUTF("logout");
+						receive.stop();
 						reader.close();
 						writer.close();
-						receive.stop();
+
 						frame.setVisible(false);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -304,8 +385,6 @@ public class User {
 					}
 				}
 			});
-			
-			btnLogOut.setBounds(501, 25, 89, 23);
 			frame.getContentPane().add(btnLogOut);
 			
 			

@@ -15,25 +15,26 @@ import java.util.Vector;
 
 public class Server extends Thread{
 static Vector<ClientController> ar = new Vector<>();
+
+static Vector<Thread> are = new Vector<>();
+
 static Vector<String>userList = new Vector();
 static int i=0;
   public static void main(String args[]) {
 	  		
+	  ReadXML authentic = new ReadXML();
 	  		
 	  		
 	  		try {
-	  			ServerSocket severMainSocket = new ServerSocket(9999);
-	  			//ServerSocket severMainSocketList = new ServerSocket(9999);//for user list sending
-	  		
+	  			ServerSocket severLogin = new ServerSocket(9999);
+	  			
 	  			while(true) {
 	  				    
 	  				
 	  					
-	  					Socket socketForClient = severMainSocket.accept();
-	  					//Socket socketList = severMainSocketList.accept();
+	  					Socket socketForClient = severLogin.accept();
 	  					
 	  					
-	  					//input,output
 	  					DataInputStream is = new DataInputStream(socketForClient.getInputStream());
 	  					DataOutputStream os = new DataOutputStream(socketForClient.getOutputStream());
 	  					//input,output
@@ -41,28 +42,75 @@ static int i=0;
 	  					
 	  					String username = is.readUTF();
 	  					
-	  					userList.add(username);
+	  					String [] info = username.split("#!#");
+	  					
+	  					
+	  					
+	  			if(info[0].equals("$%")) {
+	  				
+	  				System.out.println("Sign up Sccessful.!!");
+	  				
+	  				writeXMLfile writeInfo = new writeXMLfile();
+	  				try {
+						writeInfo.writeXML(info[1], info[2], info[3], info[4],info[5]);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	  				
+	  				
+	  			}		
+	  					
+	  					
+	  			
+	  			else {
+	  					
+	  					String [] signInfo = username.split("@!@");
+	  					String [] signInfo2 = signInfo[1].split("               ");
+	  					
+	  					String uName = signInfo2[0];
+	  					String pass = signInfo[0];
+	  					
+	  					authentic.ReadXml(uName, pass);
+	  					
+	  				if(authentic.flag==true) {	
+	  					
+	  					os.writeUTF("Login Successful!!!#!# " );
+	  					userList.add(signInfo[1]);
+	  					
+	  					
 	  					System.out.println("server class::"+username);
-	  					System.out.println("Accepted client..."+username);
-	  					
-	  					ClientController clients = new ClientController(socketForClient,username,is,os);
-	  					Thread newClient = new Thread(clients); 
+	  					//System.out.println("Accepted client..."+username);
 	  					
 	  					
 	  					
-	  					//adding client into the vector for list
+	  					ClientController clients = new ClientController(socketForClient,signInfo[1],is,os);
+	  					Thread newClient = new Thread(clients);
+	  					
+	  					
+	  				
+	  					System.out.println("thread id"+newClient.getId());
+	  					
 	  					ar.add(clients);
 	  					
 	  					newClient.start();
 	  					i++;
 	  					
 	  					for(ClientController ct: Server.ar) { 
-	  						//if(ct.clientName.equals(msgReceiver) && (ct.isLogIn==true)) {
+	  			
 	  							for(String j: userList)
-	  								ct.os.writeUTF(" #"+j);
+	  								ct.os.writeUTF(" #!#"+j);
 	  							
 	  					}
 	  					
+	  			      }
+	  				
+	  				else {
+	  					os.writeUTF("username or password is incorrect #!# " );
+	  					
+	  				}
+	  				
+	  			   }	
 	  					
 	  			}
 	  			
@@ -72,3 +120,4 @@ static int i=0;
 	  		}
 	  }
 }
+
