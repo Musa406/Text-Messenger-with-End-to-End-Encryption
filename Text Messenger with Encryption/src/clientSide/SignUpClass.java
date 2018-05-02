@@ -94,7 +94,7 @@ public class SignUpClass {
 		frame.getContentPane().add(lblSignIn);
 		
 		JLabel lblUsername = new JLabel("Username");
-		lblUsername.setBounds(88, 109, 88, 20);
+		lblUsername.setBounds(88, 109, 66, 20);
 		frame.getContentPane().add(lblUsername);
 		
 		usernameField = new JTextField();
@@ -112,7 +112,7 @@ public class SignUpClass {
 		emailField.setColumns(10);
 		
 		JLabel lblPassword = new JLabel("Password");
-		lblPassword.setBounds(88, 186, 88, 14);
+		lblPassword.setBounds(88, 186, 64, 14);
 		frame.getContentPane().add(lblPassword);
 		
 		passwordField = new JPasswordField();
@@ -245,40 +245,29 @@ public class SignUpClass {
 		
 		JButton signIn2 = new JButton("Sign in");
 		signIn2.setBackground(new Color(0, 139, 139));
-		signIn2.setBounds(435, 53, 89, 23);
+		signIn2.setBounds(430, 22, 89, 23);
 		frame.getContentPane().add(signIn2);
 		
 		JLabel lblGender = new JLabel("Gender");
 		lblGender.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		lblGender.setBounds(100, 311, 92, 17);
+		lblGender.setBounds(100, 311, 68, 17);
 		frame.getContentPane().add(lblGender);
 		
 		JLabel lblRetypePassword = new JLabel("Re-Type password");
-		lblRetypePassword.setBounds(65, 226, 131, 20);
+		lblRetypePassword.setBounds(88, 226, 108, 20);
 		frame.getContentPane().add(lblRetypePassword);
 		
 		passwordField2 = new JPasswordField();
 		passwordField2.setBounds(209, 217, 166, 29);
 		frame.getContentPane().add(passwordField2);
 		
-		JButton btnShowAll = new JButton("show all");
 		
-		btnShowAll.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-							
-				
-				
-				
-			}
-		});
-		btnShowAll.setBounds(396, 382, 89, 23);
-		frame.getContentPane().add(btnShowAll);
 		
 		
 		signIn2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				frame.setVisible(false);
-				User signUp = new User();
+				User signIn = new User();
 				//signUp.createAccount();
 				
 			}

@@ -26,6 +26,7 @@ import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.JScrollBar;
 import javax.swing.JList;
+import javax.swing.UIManager;
 
 
 
@@ -66,17 +67,19 @@ public class User {
 		});
 	}
 
-	//Graphical part..............................................................................
+	
 	public User() {
 		
 		RSAencryption rsa = new RSAencryption();
 
+		//Graphical part..............................................................................
+		
 		frame = new JFrame();
 		frame.getContentPane().setBackground(new Color(95, 158, 160));
 		frame.setBounds(100, 100, 640, 497);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);
+		frame.getContentPane().setLayout(null);
 		
 		usernameField = new JTextField();
 		usernameField.setBounds(24, 24, 95, 25);
@@ -123,11 +126,11 @@ public class User {
 		JButton sendButton = new JButton("Send");
 		sendButton.setBounds(331, 382, 108, 31);
 		sendButton.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 18));
-		sendButton.setBackground(new Color(32, 178, 170));
+		sendButton.setBackground(UIManager.getColor("OptionPane.warningDialog.titlePane.shadow"));
 		frame.getContentPane().add(sendButton);
 		
 		JLabel lblActiveUser = new JLabel("Active user");
-		lblActiveUser.setBounds(468, 72, 122, 31);
+		lblActiveUser.setBounds(468, 76, 122, 31);
 		lblActiveUser.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 16));
 		frame.getContentPane().add(lblActiveUser);
 		
@@ -137,8 +140,8 @@ public class User {
 		frame.getContentPane().add(textArea_1);
 		
 		//JLabel lblCipherText = new JLabel("Cipher Text");
-		JButton lblCipherText = new JButton("sign up");
-		lblCipherText.setBounds(479, 25, 108, 23);
+		JButton lblCipherText = new JButton("Create new account");
+		lblCipherText.setBounds(371, 443, 235, 31);
 		lblCipherText.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 14));
 		frame.getContentPane().add(lblCipherText);
 		
@@ -149,8 +152,11 @@ public class User {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+			
 				frame.setVisible(false);
 				signup = new SignUpClass();
+				//System.exit(0);
+				
 				
 			}
 		});
@@ -177,7 +183,7 @@ public class User {
 		
 		
 		JList list = new JList(activeUserList);
-		list.setBounds(478, 118, 81, 260);
+		list.setBounds(478, 118, 89, 288);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	    list.setSelectedIndex(0);
 	    list.setVisibleRowCount(10);
@@ -241,6 +247,10 @@ public class User {
 										String receiveMsg =  reader.readUTF();
 										System.out.println("message received::"+receiveMsg);
 										
+										
+										System.out.println("check2 thread is alive??: "+receive.isAlive());
+										
+										
 										StringTokenizer sti = new StringTokenizer(receiveMsg,"#!#");  // break string two part... 1)Message 2)Receiver
 										
 										String message = sti.nextToken();
@@ -258,7 +268,8 @@ public class User {
 											if(nameMsg.length>1) {
 												
 												String plainMsg = rsa.decrypt(nameMsg[1]);
-												textArea.setText(nameMsg[0]+" : "+plainMsg);
+												//textArea.setText(nameMsg[0]+" : "+plainMsg);
+												textArea.append(nameMsg[0]+" : "+plainMsg);
 											
 												System.out.println("cipher msg is "+nameMsg[1]);
 											}
@@ -316,6 +327,8 @@ public class User {
 										System.out.println("Problem occured while receiving message...");
 									}		
 							   }
+							   
+							   
 						   }});
 						receive.start();
 						
@@ -368,17 +381,24 @@ public class User {
 		
 		//Logout.....................................................................................
 		 JButton btnLogOut = new JButton("Log out");
-		 btnLogOut.setBounds(479, 405, 89, 23);
+		 btnLogOut.setBounds(501, 25, 89, 23);
 			btnLogOut.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
 						
 						writer.writeUTF("logout");
+					
 						receive.stop();
+						
 						reader.close();
 						writer.close();
-
+						
+						//System.out.println("check3 thread "+receive.isInterrupted());	
+						//System.out.println("check thread is alive??: "+receive.isAlive());
+						
 						frame.setVisible(false);
+						System.exit(0);
+						
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -386,6 +406,11 @@ public class User {
 				}
 			});
 			frame.getContentPane().add(btnLogOut);
+			
+			JLabel lblCipherText_1 = new JLabel("cipher text");
+			lblCipherText_1.setBounds(333, 305, 106, 15);
+			lblCipherText_1.setFont(new Font("Dialog", Font.BOLD, 16));
+			frame.getContentPane().add(lblCipherText_1);
 			
 			
 			

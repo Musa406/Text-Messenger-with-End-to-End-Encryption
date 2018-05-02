@@ -62,14 +62,14 @@ public class ReadXML {
 					flag=true;
 					return;
 				}
-				else 	System.out.println("malta match kore nai...");
-				System.out.println("userName:"+element1.getElementsByTagName("userName").item(0).getTextContent());
-				System.out.println("email:"+element1.getElementsByTagName("Email").item(0).getTextContent());
-				System.out.println("password:"+element1.getElementsByTagName("password").item(0).getTextContent());
-				System.out.println("gender:"+element1.getElementsByTagName("gender").item(0).getTextContent());
-				System.out.println("dateOfBirth:"+element1.getElementsByTagName("dateOfBirth").item(0).getTextContent());
+				else 	System.out.println("not matched");
+				//System.out.println("userName:"+element1.getElementsByTagName("userName").item(0).getTextContent());
+				//System.out.println("email:"+element1.getElementsByTagName("Email").item(0).getTextContent());
+				//System.out.println("password:"+element1.getElementsByTagName("password").item(0).getTextContent());
+				//System.out.println("gender:"+element1.getElementsByTagName("gender").item(0).getTextContent());
+				//System.out.println("dateOfBirth:"+element1.getElementsByTagName("dateOfBirth").item(0).getTextContent());
 						
-				System.out.println();
+				//System.out.println();
 											
 			}
 		}

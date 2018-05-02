@@ -8,20 +8,22 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.StringTokenizer;
 
-public class ClientController implements Runnable{
+public class ClientController extends Thread{
 	
 	Socket socketForClient;
 	private String clientName;
 	final DataInputStream is;
 	final DataOutputStream os;
 	boolean isLogIn;
+	private int clientIndex;
 
-	public ClientController(Socket socketForClient, String clientName, DataInputStream is, DataOutputStream os) {
+	public ClientController(Socket socketForClient, String clientName, DataInputStream is, DataOutputStream os,int clientIndex) {
 		this.socketForClient=socketForClient;
 		this.clientName=clientName;
 		this.is=is;
 		this.os=os;
 		this.isLogIn = true;
+		this.clientIndex=clientIndex;
 	}
 
 	@Override
@@ -31,14 +33,14 @@ public class ClientController implements Runnable{
 		while(true) {
 			try {
 				receiveAll = is.readUTF();
-				System.out.println(receiveAll);		
+				
 				
 				//Logout............................................................................
 				if(receiveAll.equals("logout")) {
 					this.isLogIn = false;
 					Server sr = new Server();
 					int x=sr.i-1;
-					System.out.println(" .. "+x);
+					
 					
 					
 					
@@ -47,6 +49,9 @@ public class ClientController implements Runnable{
 					
                   
 				    sr.i=x;
+				    
+				    Thread stopCurrentThread = currentThread();
+				    stopCurrentThread.stop();
 			
 					System.out.println("log out successfully...");				
 					        break;			
@@ -61,7 +66,7 @@ public class ClientController implements Runnable{
 						String msgToSend = sti.nextToken();
 						String msgReceiver = sti.nextToken();
 						
-						//Searching receiver...
+						//Searching receiver............
 						for(ClientController ct: Server.ar) { 
 							if(ct.clientName.equals(msgReceiver) && (ct.isLogIn==true)) {
 								String str[] = clientName.split("               ");
@@ -69,6 +74,8 @@ public class ClientController implements Runnable{
 								break;
 							}
 						}
+						
+						//end............................
 			
 				}
 				//...................................................................................
