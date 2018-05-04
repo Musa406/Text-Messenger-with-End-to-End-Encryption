@@ -39,17 +39,22 @@ public class ClientController extends Thread{
 				if(receiveAll.equals("logout")) {
 					this.isLogIn = false;
 					Server sr = new Server();
-					int x=sr.i-1;
 					
 					
+					//
+					int i=0;
 					
+					for(ClientController ct: Server.ar) {
+						if(ct.clientName.equals(clientName))
+						{
+							sr.ar.remove(i);
+							sr.userList.remove(i);
+							break;
+						}
+						else i++;
+					}
 					
-					sr.ar.remove(x);
-					sr.userList.remove(x);
-					
-                  
-				    sr.i=x;
-				    
+					//
 				    Thread stopCurrentThread = currentThread();
 				    stopCurrentThread.stop();
 			
