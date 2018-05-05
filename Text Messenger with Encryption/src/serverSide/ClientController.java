@@ -41,12 +41,19 @@ public class ClientController extends Thread{
 					Server sr = new Server();
 					
 					
+					
+					
+					for(ClientController ct: Server.ar)
+				    {
+				    	ct.os.writeUTF(" #!#remove@@@@"+clientName);
+				    }
 					//
 					int i=0;
 					
+					
 					for(ClientController ct: Server.ar) {
 						if(ct.clientName.equals(clientName))
-						{
+						{	
 							sr.ar.remove(i);
 							sr.userList.remove(i);
 							break;
@@ -57,6 +64,10 @@ public class ClientController extends Thread{
 					//
 				    Thread stopCurrentThread = currentThread();
 				    stopCurrentThread.stop();
+				    
+				    
+				    
+				    
 			
 					System.out.println("log out successfully...");				
 					        break;			
