@@ -58,7 +58,7 @@ public class ReadXML {
 				String s2=element1.getElementsByTagName("password").item(0).getTextContent();
 				
 				if(s1.equals(uName)&&s2.equals(pass)) {
-					System.out.println("malta correct...");
+					System.out.println("matched...");
 					flag=true;
 					return;
 				}

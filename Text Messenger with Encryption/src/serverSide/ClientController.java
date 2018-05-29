@@ -62,19 +62,22 @@ public class ClientController extends Thread{
 					}
 					
 					//
+					
+					
+					os.close();
+					is.close();
+					this.socketForClient.close();
+					
+					//System.out.println("log out successfully...");	
+					
 				    Thread stopCurrentThread = currentThread();
 				    stopCurrentThread.stop();
 				    
-				    
-				    
-				    
-			
-					System.out.println("log out successfully...");				
-					        break;			
+						
 				}
-				//..............................................................................
+				//....logout..end........................................................................
 				
-				//Sending messege to targeted user..............................................
+				//....Sending messege to targeted user..............................................
 				else {
 				
 						StringTokenizer sti = new StringTokenizer(receiveAll, "#!#");  // break string two part... 1)Message 2)Receiver
@@ -94,10 +97,35 @@ public class ClientController extends Thread{
 						//end............................
 			
 				}
-				//...................................................................................
+				//...message sending...end................................................................................
 				
 			}catch(IOException ex){
+				  
+				for(ClientController ct: Server.ar)
+			    {
+			    	try {
+						ct.os.writeUTF(" #!#remove@@@@"+clientName);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			    }
+				
+				int i=0;
+				Server sr = new Server();
+				
+				for(ClientController ct: Server.ar) {
+					if(ct.clientName.equals(clientName))
+					{	
+						sr.ar.remove(i);
+						sr.userList.remove(i);
+						break;
+					}
+					else i++;
+				}
+				
 				System.out.println("problem occurrs in thread client");
+				break;
 			}
 		}
 		

@@ -1,16 +1,14 @@
 package serverSide;
 
-import java.io.BufferedReader;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
+
+import javax.swing.JOptionPane;
 
 
 public class Server extends Thread{
@@ -24,6 +22,7 @@ static int i=0;
 	  		
 	  ReadXML authentic = new ReadXML();
 	  		
+	  		JOptionPane.showMessageDialog(null, "Server has started!!!");
 	  		
 	  		try {
 	  			ServerSocket severLogin = new ServerSocket(9999);
@@ -78,14 +77,10 @@ static int i=0;
 	  					
 	  				if(authentic.flag==true) {	
 		  					
-		  					os.writeUTF("Login Successful!!!#!# " );
+		  					os.writeUTF("Login Successful!!" );
 		  					userList.add(signInfo[1]);
 		  					
-		  					
-		  					System.out.println("server class::"+username);
-		  					//System.out.println("Accepted client..."+username);
-		  					
-		  					
+		  				
 		  					
 		  					ClientController clients = new ClientController(socketForClient,signInfo[1],is,os,i);
 		  					Thread newClient = new Thread(clients);
